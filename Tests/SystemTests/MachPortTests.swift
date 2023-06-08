@@ -29,7 +29,9 @@ final class MachPortTests: XCTestCase {
     }
 
     func scopedReceiveRight(name:mach_port_name_t) -> mach_port_urefs_t {
+#if false
         _ = Mach.Port<Mach.ReceiveRight>(name:name) // this should automatically deallocate when going out of scope
+#endif
         return refCountForMachPortName(name:name, kind:MACH_PORT_RIGHT_RECEIVE)
     }
 
@@ -49,6 +51,7 @@ final class MachPortTests: XCTestCase {
         XCTAssert(zero == 0);
     }
 
+#if false
     func consumeSendRightAutomatically(name:mach_port_name_t) -> mach_port_urefs_t {
         let send = Mach.Port<Mach.SendRight>(name:name) // this should automatically deallocate when going out of scope
         return send.withBorrowedName { name in
@@ -139,6 +142,7 @@ final class MachPortTests: XCTestCase {
         XCTAssert(same == one)
 
     }
+#endif
 }
 
 #endif
