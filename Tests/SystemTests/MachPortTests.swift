@@ -21,7 +21,21 @@ import System
 final class MachPortTests: XCTestCase {
 
   func testCreateAndDoNothing() throws {
-    _ = Mach.Port<Mach.ReceiveRight>()
+    var kr = KERN_SUCCESS
+    let _name = withUnsafeTemporaryAllocation(of: mach_port_name_t.self, capacity: 1) {
+      kr = mach_port_allocate(mach_task_self_, MACH_PORT_RIGHT_RECEIVE, $0.baseAddress)
+      precondition(kr == KERN_SUCCESS)
+      return $0.baseAddress.unsafelyUnwrapped.pointee
+    }
+
+    let secret = mach_port_context_t(arc4random())
+    kr = mach_port_guard(mach_task_self_, _name, secret, 0)
+    precondition(kr == KERN_SUCCESS)
+    let _context = secret
+
+    precondition(_name != 0xFFFFFFFF)
+    kr = mach_port_destruct(mach_task_self_, _name, -1, _context)
+    precondition(kr == KERN_SUCCESS)
   }
 }
 
