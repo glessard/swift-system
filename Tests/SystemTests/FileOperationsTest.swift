@@ -113,7 +113,7 @@ final class FileOperationsTest: XCTestCase {
   func testHelpers() {
     // TODO: Test writeAll, writeAll(toAbsoluteOffset), closeAfter
   }
-  
+
 #if !os(Windows)
   func testAdHocPipe() throws {
     // Ad-hoc test testing `Pipe` functionality.
@@ -183,6 +183,14 @@ final class FileOperationsTest: XCTestCase {
     }
     issue26.runAllTests()
 
+  }
+
+  func testGithubIssue26Straightforwardly() throws {
+    _ = try FileDescriptor.open(
+      "a path", .writeOnly, options: [.create],
+      permissions: [.groupWrite],
+      retryOnInterrupt: false
+    )
   }
 
 #if !os(Windows)
