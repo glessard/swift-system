@@ -1516,8 +1516,25 @@ extension Errno: CustomStringConvertible, CustomDebugStringConvertible {
   /// The corresponding C function is `strerror(3)`.
   @inline(never)
   public var description: String {
-    guard let ptr = system_strerror(self.rawValue) else { return "unknown error" }
-    return String(cString: ptr)
+    var bufferSize = 64
+    var status: Int32 = 0
+    var message: String
+    repeat {
+      if @available(macOS 11, *) {
+        message = String(unsafeUninitializedCapacity: bufferSize) {
+          status = system_strerror_r(self.rawValue, $0.baseAddress, $0.count)
+          if status == Errno.outOfRange.rawValue {
+            bufferSize += bufferSize>>1
+            return 0
+          }
+          return $0.firstIndex(of: 0)!
+        }
+        else {
+
+        }
+      }
+    } while status != Errno.outOfRange.rawValue
+    return message
   }
 
   ///  A textual representation,

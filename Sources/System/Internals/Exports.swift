@@ -83,6 +83,16 @@ internal func system_strerror(_ __errnum: Int32) -> UnsafeMutablePointer<Int8>! 
   strerror(__errnum)
 }
 
+#if os(Windows)
+internal func system_strerror_s(_ buf: UnsafeMutablePointer<CChar>, _ bufsz: Int, _ errnum: Int32) -> Int32 {
+  strerror_s(buf, bufsz, errnum)
+}
+#else
+internal func system_strerror_r(_ errnum: Int32, _ buf: UnsafeMutablePointer<UInt8>?, _ bufsz: Int) -> Int32 {
+  strerror_r(errnum, buf, bufsz)
+}
+#endif
+
 internal func system_strlen(_ s: UnsafePointer<CChar>) -> Int {
   strlen(s)
 }
