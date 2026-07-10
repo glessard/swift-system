@@ -23,7 +23,9 @@ import Android
 #error("Unsupported Platform")
 #endif
 
+#if !SYSTEM_PACKAGE_DARWIN
 import CSystem
+#endif
 
 // Interacting with the mocking system, tracing, etc., is a potentially significant
 // amount of code size, so we hand outline that code for every syscall
@@ -141,13 +143,18 @@ internal func system_dup2(_ fd: Int32, _ fd2: Int32) -> Int32 {
   return dup2(fd, fd2)
 }
 
+@available(macOS 27.0, iOS 27.0, watchOS 27.0, tvOS 27.0, visionOS 27.0, *)
 internal func system_dup3(_ fd: Int32, _ fd2: Int32, _ oflag: Int32) -> Int32 {
-  #if ENABLE_MOCKING
+#if ENABLE_MOCKING
   if mockingEnabled { return _mock(fd, fd2, oflag) }
-  #endif
-  return csystem_posix_dup3(fd, fd2, oflag)
-}
 #endif
+#if SYSTEM_PACKAGE_DARWIN
+  return dup3(fd, fd2, oflag)
+#else
+  return csystem_posix_dup3(fd, fd2, oflag)
+#endif
+}
+#endif // !os(WASI)
 
 #if !os(WASI)
 internal func system_pipe(_ fds: UnsafeMutablePointer<Int32>) -> CInt {
@@ -157,13 +164,18 @@ internal func system_pipe(_ fds: UnsafeMutablePointer<Int32>) -> CInt {
   return pipe(fds)
 }
 
+@available(macOS 27.0, iOS 27.0, watchOS 27.0, tvOS 27.0, visionOS 27.0, *)
 internal func system_pipe2(_ fds: UnsafeMutablePointer<Int32>, _ oflag: Int32) -> CInt {
 #if ENABLE_MOCKING
   if mockingEnabled { return _mock(fds, oflag) }
 #endif
+#if SYSTEM_PACKAGE_DARWIN
+  return pipe2(fds, oflag)
+#else
   return csystem_posix_pipe2(fds, oflag)
-}
 #endif
+}
+#endif // !os(WASI)
 
 internal func system_ftruncate(_ fd: Int32, _ length: off_t) -> Int32 {
 #if ENABLE_MOCKING
@@ -201,7 +213,7 @@ internal func system_confstr(
 ) -> Int {
   return confstr(name, buf, len)
 }
-#endif
+#endif // SYSTEM_PACKAGE_DARWIN
 
 #if !os(Windows)
 internal let SYSTEM_AT_REMOVE_DIR = AT_REMOVEDIR
@@ -269,7 +281,7 @@ internal func system_openat(
 #endif
   return openat(fd, path, oflag)
 }
-#endif
+#endif // !os(Windows)
 
 #if !os(WASI) // WASI has no umask
 internal func system_umask(
@@ -277,7 +289,7 @@ internal func system_umask(
 ) -> CInterop.Mode {
   return umask(mode)
 }
-#endif
+#endif // !os(WASI)
 
 internal func system_getenv(
   _ name: UnsafePointer<CChar>

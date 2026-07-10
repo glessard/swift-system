@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift System open source project
 
- Copyright (c) 2020 - 2025 Apple Inc. and the Swift System project authors
+ Copyright (c) 2020 - 2026 Apple Inc. and the Swift System project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -157,7 +157,8 @@ final class FileOperationsTest: XCTestCase {
     // TODO: Test writeAll, writeAll(toAbsoluteOffset), closeAfter
   }
 
-  #if !os(WASI) // WASI has no pipe
+#if !os(WASI) // WASI has no pipe
+  @available(System 1.1.0, *)
   func testAdHocPipe() throws {
     // Ad-hoc test testing `Pipe` functionality.
     // We cannot test `Pipe` using `MockTestCase` because it calls `pipe` with a pointer to an array local to the `Pipe`, the address of which we do not know prior to invoking `Pipe`.
@@ -177,7 +178,7 @@ final class FileOperationsTest: XCTestCase {
     }
   }
 
-  #if !SYSTEM_PACKAGE_DARWIN
+  @available(macOS 27.0, iOS 27.0, watchOS 27.0, tvOS 27.0, visionOS 27.0, *)
   func testAdHocPipeWithOptions() throws {
     // Ad-hoc test testing `Pipe` functionality.
     // We cannot test `Pipe` using `MockTestCase` because it calls `pipe` with a pointer to an array local to the `Pipe`, the address of which we do not know prior to invoking `Pipe`.
@@ -198,10 +199,9 @@ final class FileOperationsTest: XCTestCase {
       }
     }
   }
-  #endif // !SYSTEM_PACKAGE_DARWIN
-  #endif // !os(WASI)
+#endif // !os(WASI)
 
-  #if !os(Windows)
+#if !os(Windows)
   func testAdHocDuplicate2() throws {
     try withTemporaryFilePath(basename: "test") {
       let path = $0.appending("foo2.txt")
@@ -238,9 +238,8 @@ final class FileOperationsTest: XCTestCase {
       }
     }
   }
-  #endif // !os(Windows)
 
-  #if !SYSTEM_PACKAGE_DARWIN && !os(Windows)
+  @available(macOS 27.0, iOS 27.0, watchOS 27.0, tvOS 27.0, visionOS 27.0, *)
   func testAdHocDuplicate3() throws {
 
     try withTemporaryFilePath(basename: "test") {
@@ -274,7 +273,7 @@ final class FileOperationsTest: XCTestCase {
       }
     }
   }
-  #endif // !SYSTEM_PACKAGE_DARWIN && !os(Windows)
+#endif // !os(Windows)
 
   func testAdHocOpen() {
     // Ad-hoc test touching a file system.
@@ -334,6 +333,7 @@ final class FileOperationsTest: XCTestCase {
   }
   #endif // ENABLE_MOCKING
 
+  @available(System 1.2.0, *)
   func testResizeFile() throws {
     try withTemporaryFilePath(basename: "testResizeFile") { path in 
       let fd = try FileDescriptor.open(path.appending("\(UUID().uuidString).txt"), .readWrite, options: [.create, .truncate], permissions: .ownerReadWrite)

@@ -631,7 +631,7 @@ internal var _O_CLOEXEC: CInt {
 #if !os(Windows)
 @_alwaysEmitIntoClient
 internal var _O_CLOFORK: CInt {
-  #if !os(WASI) && !os(Linux) && !os(Android) && !canImport(Darwin) && !os(FreeBSD)
+  #if !os(WASI) && !os(Linux) && !os(Android) && !os(FreeBSD)
   O_CLOFORK
   #elseif os(FreeBSD)
   FREEBSD_O_CLOFORK
