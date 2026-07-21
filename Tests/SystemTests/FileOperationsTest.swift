@@ -178,8 +178,10 @@ final class FileOperationsTest: XCTestCase {
     }
   }
 
-  @available(macOS 27.0, iOS 27.0, watchOS 27.0, tvOS 27.0, visionOS 27.0, *)
   func testAdHocPipeWithOptions() throws {
+    guard #available(macOS 27.0, iOS 27.0, watchOS 27.0, tvOS 27.0, visionOS 27.0, *) else {
+      throw XCTSkip("pipe2/PipeOptions requires macOS 27 or newer")
+    }
     // Ad-hoc test testing `Pipe` functionality.
     // We cannot test `Pipe` using `MockTestCase` because it calls `pipe` with a pointer to an array local to the `Pipe`, the address of which we do not know prior to invoking `Pipe`.
     let options: FileDescriptor.PipeOptions = [.closeOnExec]
@@ -239,8 +241,10 @@ final class FileOperationsTest: XCTestCase {
     }
   }
 
-  @available(macOS 27.0, iOS 27.0, watchOS 27.0, tvOS 27.0, visionOS 27.0, *)
   func testAdHocDuplicate3() throws {
+    guard #available(macOS 27.0, iOS 27.0, watchOS 27.0, tvOS 27.0, visionOS 27.0, *) else {
+      throw XCTSkip("dup3/DuplicateOptions requires macOS 27 or newer")
+    }
 
     try withTemporaryFilePath(basename: "test") {
       let path = $0.appending("foo3.txt")
