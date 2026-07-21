@@ -12,9 +12,9 @@
 #include <fcntl.h>
 
 #ifdef O_CLOFORK
-#define DARWIN_O_CLOFORK O_CLOFORK
+#define COMPATIBILITY_O_CLOFORK O_CLOFORK
 #else
-#define DARWIN_O_CLOFORK 0
+#define COMPATIBILITY_O_CLOFORK 0
 #endif
 
 #endif // defined(__APPLE__)

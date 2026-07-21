@@ -12,10 +12,9 @@
 #include <fcntl.h>
 
 #ifdef O_CLOFORK
-#define FREEBSD_O_CLOFORK O_CLOFORK
+#define COMPATIBILITY_O_CLOFORK O_CLOFORK
 #else
-#define FREEBSD_O_CLOFORK 0
+#define COMPATIBILITY_O_CLOFORK 0
 #endif
 
-#endif
-
+#endif // defined(__FreeBSD__)

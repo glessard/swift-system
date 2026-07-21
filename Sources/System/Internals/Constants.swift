@@ -629,10 +629,8 @@ internal var _O_CLOEXEC: CInt {
 #if !os(Windows)
 @_alwaysEmitIntoClient
 internal var _O_CLOFORK: CInt {
-  #if SYSTEM_PACKAGE_DARWIN
-  DARWIN_O_CLOFORK
-  #elseif os(FreeBSD)
-  FREEBSD_O_CLOFORK
+  #if SYSTEM_PACKAGE_DARWIN || os(FreeBSD)
+  COMPATIBILITY_O_CLOFORK
   #elseif !os(WASI) && !os(Linux) && !os(Android)
   O_CLOFORK
   #else
