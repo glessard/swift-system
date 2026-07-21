@@ -23,9 +23,7 @@ import Android
 #error("Unsupported Platform")
 #endif
 
-#if !SYSTEM_PACKAGE_DARWIN
 import CSystem
-#endif
 
 // Interacting with the mocking system, tracing, etc., is a potentially significant
 // amount of code size, so we hand outline that code for every syscall
@@ -148,11 +146,7 @@ internal func system_dup3(_ fd: Int32, _ fd2: Int32, _ oflag: Int32) -> Int32 {
 #if ENABLE_MOCKING
   if mockingEnabled { return _mock(fd, fd2, oflag) }
 #endif
-#if SYSTEM_PACKAGE_DARWIN
-  return dup3(fd, fd2, oflag)
-#else
   return csystem_posix_dup3(fd, fd2, oflag)
-#endif
 }
 #endif // !os(WASI)
 
@@ -169,11 +163,7 @@ internal func system_pipe2(_ fds: UnsafeMutablePointer<Int32>, _ oflag: Int32) -
 #if ENABLE_MOCKING
   if mockingEnabled { return _mock(fds, oflag) }
 #endif
-#if SYSTEM_PACKAGE_DARWIN
-  return pipe2(fds, oflag)
-#else
   return csystem_posix_pipe2(fds, oflag)
-#endif
 }
 #endif // !os(WASI)
 
