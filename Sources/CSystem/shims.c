@@ -41,7 +41,6 @@
 
 // Wrappers are required because _GNU_SOURCE causes a conflict with other imports when defined in CSystemLinux.h
 
-#if !defined(_WIN32)
 extern int csystem_posix_pipe2(int fildes[2], int flag) {
   #if defined(__APPLE__) && defined(HAVE_PIPE2_DUP3)
   if (__builtin_available(macOS 27, iOS 27, tvOS 27, watchOS 27, visionOS 27, *))
@@ -49,12 +48,13 @@ extern int csystem_posix_pipe2(int fildes[2], int flag) {
   __builtin_trap();
   #elif defined(HAVE_PIPE2_DUP3)
   return pipe2(fildes, flag);
+  #elif defined(_WIN32)
+  return _pipe2(fildes, flag);
   #else
   errno = ENOSYS;
   return -1;
   #endif
 }
-#endif // !defined(_WIN32)
 
 extern int csystem_posix_dup3(int fildes, int fildes2, int flag) {
   #if defined(__APPLE__) && defined(HAVE_PIPE2_DUP3)

@@ -207,7 +207,7 @@ internal func pipe(
 }
 
 @inline(__always)
-internal func csystem_posix_pipe2(
+internal func _pipe2(
   _ fds: UnsafeMutablePointer<Int32>, bytesReserved: UInt32 = 0, _ oflag: Int32
 ) -> CInt {
   return _pipe(fds, bytesReserved, _O_BINARY | oflag)
